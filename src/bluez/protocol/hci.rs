@@ -258,7 +258,8 @@ pub struct LEAdvertisingInfo {
     pub evt_type: u8,
     pub bdaddr_type: u8,
     pub bdaddr: BDAddr,
-    pub data: Vec<LEAdvertisingData>
+    pub data: Vec<LEAdvertisingData>,
+    pub raw_data: Vec<u8>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -539,8 +540,8 @@ fn le_advertising_data(i: &[u8]) -> IResult<&[u8], Vec<LEAdvertisingData>> {
     Ok((i, result))
 }
 
-named!(le_advertising_info<&[u8], LEAdvertisingInfo>,
-    do_parse!(
+fn le_advertising_info(input: &[u8]) -> IResult<&[u8], LEAdvertisingInfo> {
+    do_parse!(input,
        // TODO: support counts other than 1
        _count: le_u8 >>
        evt_type: le_u8 >>
@@ -552,10 +553,11 @@ named!(le_advertising_info<&[u8], LEAdvertisingInfo>,
        })) >>
        (
          LEAdvertisingInfo {
-           evt_type, bdaddr_type, bdaddr, data: data
+           evt_type, bdaddr_type, bdaddr, data: data, raw_data: input.to_vec()
          }
        )
-    ));
+    )
+}
 
 named!(bd_addr<&[u8], BDAddr>,
     do_parse!(

@@ -261,13 +261,14 @@ pub trait Peripheral: Send + Sync + Clone + Debug {
     fn on_notification(&self, handler: NotificationHandler);
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub enum CentralEvent {
     DeviceDiscovered(BDAddr),
     DeviceLost(BDAddr),
     DeviceUpdated(BDAddr),
     DeviceConnected(BDAddr),
     DeviceDisconnected(BDAddr),
+    DeviceAdvertisementData(BDAddr, Vec<u8>),
 }
 
 pub type EventHandler = Box<Fn(CentralEvent) + Send>;

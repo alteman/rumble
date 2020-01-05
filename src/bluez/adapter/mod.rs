@@ -298,6 +298,7 @@ impl ConnectedAdapter {
             hci::Message::LEAdvertisingReport(info) => {
                 let mut new = false;
                 let address = info.bdaddr.clone();
+                self.emit(CentralEvent::DeviceAdvertisementData(address.clone(), info.raw_data.clone()));
 
                 {
                     let mut peripherals = self.peripherals.lock().unwrap();
